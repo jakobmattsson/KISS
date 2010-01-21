@@ -1,0 +1,107 @@
+# Grammar
+#########
+
+Program:
+  Funcs
+
+Func:
+  FuncName ':' Stms
+
+Stm:
+  VarNames '=' Exps
+
+Exp:
+  VarName
+  FuncName VarNames
+  ( Exp )
+
+FuncName:
+  [A-Z][a-zA-Z0-9]*
+
+VarName:
+  [a-z][a-zA-Z0-9]*
+
+
+
+
+# Built in functions
+####################
+
+Nand:  A x B -> C
+On:    A
+Off:   A
+Pulse: A
+
+
+
+# Drafts
+########
+
+
+
+Not: [ Nand $0 $0 ]
+And: [ Not (Nand $0 $1) ]
+Or: [ Nand (Not $0) (not $1) ]
+Nor: Not (Or $0 $1)
+Xor: 
+  v0 = Nand in0 in1
+  out0 = Nand (Nand in0 v0) (Nand in1 v0)
+Xor3: [ Xor $0 (Xor $1 $2) ]
+Xor4: [ Xor $0 (Xor3 $1 $2 $3) ]
+Add: [ Xor $0 $1, And $0 $1]
+
+And4:
+  $0 = And (And .0 .1) (And .2 .3)
+Or8:
+  $0 = Or (Or (Or .0 .1) (Or .2 .3)) (Or (Or .4 .5) (Or .6 .7))
+
+
+
+
+FullAdder:
+  a b c = .0 .1 .2
+  $0 = Xor a b c
+  $1 = Or (And a b) (And c (Xor a b))
+
+RippleCarry8:
+  a0 a1 a2 a3 a4 a5 a6 a7 = .00 .01 .02 .03 .04 .05 .06 .07
+  b0 b1 b2 b3 b4 b5 b6 b7 = .08 .09 .10 .11 .12 .13 .14 .15
+  c                       = .16
+  $0 c1 = FullAdder a0 b0 c
+  $1 c2 = FullAdder a1 b1 c1
+  $2 c3 = FullAdder a2 b2 c2
+  $3 c4 = FullAdder a3 b3 c3
+  $4 c5 = FullAdder a4 b4 c4
+  $5 c6 = FullAdder a5 b5 c5
+  $6 c7 = FullAdder a6 b6 c6
+  $7 $8 = FullAdder a7 b7 c7
+
+
+Mux8:
+  a b c = .00 .01 .02
+  in0 in1 in2 in3 in4 in5 in6 in7 = .03 .04 .05 .06 .07 .08 .09 .10
+
+  v0 = And4 in0 (Not a) (Not b) (Not c)
+  v1 = And4 in1 (Not a) (Not b) (    c)
+  v2 = And4 in2 (Not a) (    b) (Not c)
+  v3 = And4 in3 (Not a) (    b) (    c)
+  v4 = And4 in4 (    a) (Not b) (Not c)
+  v5 = And4 in5 (    a) (Not b) (    c)
+  v6 = And4 in6 (    a) (    b) (Not c)
+  v7 = And4 in7 (    a) (    b) (    c)
+
+  $0 = Or8 v0 v1 v2 v3 v4 v5 v6 v7
+
+
+
+
+
+srLatch(S,R) = (Q, NQ)
+  $ut0 = nor $1 $ut1
+  $ut1 = not $0 $ut0
+
+
+srLatch(S,R) = (Q, NQ)
+   Q = nor R NQ
+  NQ = not S  Q
+

@@ -1,0 +1,3 @@
+A draft of a new toy programming language. BiT will only contain one single
+representation of data and that is of course the bit. There will also be four
+primitive functions (True, False, Nand and Pulse) but that's pretty much it.

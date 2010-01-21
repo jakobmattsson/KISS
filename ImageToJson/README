@@ -1,0 +1,3 @@
+Converts an image of a common format (bmp, png, jpg, tiff, gif and some more) to a raw json object.
+
+Also includes the possibility to replace a given color with transparency, in case the source format did not contain an alpha-channel.
